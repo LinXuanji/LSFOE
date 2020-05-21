@@ -21,9 +21,21 @@
     <ClCompile Include="src\ellipsesfitting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\binocularcamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\prefittingclassify.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ellipsesfitting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\binocularcamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\prefittingclassify.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

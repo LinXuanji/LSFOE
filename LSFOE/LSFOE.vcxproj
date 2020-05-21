@@ -19,11 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\binocularcamera.cpp" />
     <ClCompile Include="src\ellipsesfitting.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\prefittingclassify.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\binocularcamera.h" />
     <ClInclude Include="src\ellipsesfitting.h" />
+    <ClInclude Include="src\prefittingclassify.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\1.jpg" />

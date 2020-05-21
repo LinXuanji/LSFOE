@@ -23,7 +23,7 @@ typedef struct ellip // Ellipse parameters
 /*
 *@bref: 椭圆拟合类，提供了最小二乘法椭圆拟合的方法接口。
 *@author: ColdDewStudio
-*@version: 0.0.1
+*@version: 0.0.2
 */
 class Ellipses
 {
@@ -33,7 +33,7 @@ private:
 	cv::Mat W;								// 方程参数矩阵
 	cv::Mat S;								// XXT
 	double A, B, C, D, E, F;				// 方程参数
-	std::vector<cv::Point2f> bp;// 边界点集
+	std::vector<cv::Point2f> bp;			// 边界点集
 	ellippara ellipseparameters;			// 椭圆几何参数集
 public:
 	Ellipses();
@@ -51,7 +51,7 @@ public:
 	计算椭圆方程参数，拟合椭圆*/
 	void SolveEllipses();
 	/*@bref:返回椭圆几何参数
-	return:[ellippara]*/
+	@return:[ellippara]*/
 	ellippara FittingSolution();
 };
 
