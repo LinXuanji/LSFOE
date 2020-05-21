@@ -29,9 +29,6 @@
     <ClInclude Include="src\ellipsesfitting.h" />
     <ClInclude Include="src\prefittingclassify.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="src\1.jpg" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{41bb7bc9-f1a4-434f-9307-a3d3ae578a0f}</ProjectGuid>
