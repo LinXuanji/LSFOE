@@ -3,17 +3,6 @@
 using namespace cv;
 using namespace std;
 
-char controlmsg0[2] = { 0x50,0xff };
-char controlmsg1[2] = { 0x00,0xf6 };
-char controlmsg2[2] = { 0x25,0x00 };
-char controlmsg3[2] = { 0x5f,0xfe };
-char controlmsg4[2] = { 0x00,0x03 };
-char controlmsg5[2] = { 0x00,0x02 };
-char controlmsg6[2] = { 0x00,0x12 };
-char controlmsg7[2] = { 0x00,0x04 };
-char controlmsg8[2] = { 0x76,0xc3 };
-char controlmsg9[2] = { 0x04,0x00 };
-
 Camera::Camera()
 {
 	loadcameraparams();
@@ -249,9 +238,107 @@ void Camera::SGBM(void)
 	imshow("disparity", color);
 }
 
-void Camera::Get3Dpos(int x, int y)
+int Camera::Get3Dpos(float x, float y, float alpha, angle& ang)
 {
-	cout << "x:" << x << endl;
-	cout << "y:" << y << endl;
-	cout << xyz.at<Vec3f>(x, y) << endl;
+	Mat img = Mat::zeros(800,800,CV_8UC3);
+
+	/*int xback, yback;
+	cout << xyz.at<Vec3f>(x, y) << endl;*/
+
+	double L, X, Y, ALP;
+	L = xyz.at<Vec3f>(x, y)[2] + 15;
+
+	ALP = 90 + (1500 - alpha) * 0.135;
+	X = L * sin(ALP / 180 * PI) + MLEN * cos(ALP / 180 * PI);
+	Y = NLEN + MLEN * sin(ALP / 180 * PI) - L * cos(ALP / 180 * PI);
+
+	cout << "L:" << L << endl;
+	cout << "ALP:" << ALP << endl;
+
+	cout << "X:" << X << endl;
+	cout << "Y:" << Y << endl;
+
+	double theta1, theta2, theta3, xc, yc, k1, k2, c2, s2;
+
+	xc = X - l2 - 20;
+	yc = Y - 45;
+
+	circle(img, Point(200 + xc + l2, 400 - yc), 5, Scalar(0, 0, 255), -1, 8);
+	circle(img, Point(200, 400), 5, Scalar(255, 255, 255), -1, 8);
+	//yc = Y;
+
+	c2 = (xc * xc + yc * yc - l0 * l0 - l1 * l1) / (2 * l0 * l1);
+
+	if (c2 < -1 || c2>1)
+	{
+		return 1;
+	}
+
+	s2 = sqrt(1 - c2 * c2);
+	theta2 = atan2(s2, c2);
+
+	k1 = l0 + l1 * c2;
+	k2 = l1 * s2;
+
+	theta1 = atan2(yc, xc) - atan2(k2, k1);
+	if (theta1<0 || theta1>PI)
+	{
+		s2 = -sqrt(1 - c2 * c2);
+		theta2 = atan2(s2, c2);
+
+		k1 = l0 + l1 * c2;
+		k2 = l1 * s2;
+
+		theta1 = atan2(yc, xc) - atan2(k2, k1);
+	}
+
+	theta3 = -theta1 - theta2;
+
+	double xds;
+
+	xds = l0 * cos(theta1) + l1 * cos(theta1 + theta2) + l2 * cos(theta1 + theta2 + theta3);
+
+	line(img, Point(200, 400),Point(200 + l0 * cos(theta1), 400 - l0 * sin(theta1)), Scalar(255, 0, 255), 2, 8);
+	line(img, Point(200 + l0 * cos(theta1), 400 - l0 * sin(theta1)),
+		Point(200 + l1 * cos(theta1 + theta2) + l0 * cos(theta1), 400 - (l1 * sin(theta1 + theta2) + l0 * sin(theta1))),
+		Scalar(255, 0, 0), 2, 8);
+	line(img, Point(200 + l1 * cos(theta1 + theta2) + l0 * cos(theta1), 400 - (l1 * sin(theta1 + theta2) + l0 * sin(theta1))),
+		Point(200 + l2 * cos(theta1 + theta2 + theta3) + l1 * cos(theta1 + theta2) + l0 * cos(theta1), 
+			400 - (l2 * sin(theta1 + theta2 + theta3) + l1 * sin(theta1 + theta2) + l0 * sin(theta1))),
+		Scalar(0, 255, 0), 2, 8);
+
+	imshow("pic", img);
+
+	theta1 = theta1 * 180 / PI;
+	theta2 = theta2 * 180 / PI;
+	theta3 = theta3 * 180 / PI;
+
+	cout << "t1:" << theta1 << endl;
+	cout << "t2:" << theta2 << endl;
+	cout << "t3:" << theta3 << endl;
+
+	//theta2 = theta1 + theta2;
+	//theta3 = theta1 + theta2 + theta3;
+
+	cout << "xds:" << xds << endl;
+
+	//ang.th1 = (2000 * (90.0 - theta1) / 180.0 + 500.0);
+	//ang.th2 = (2000 * (90.0 - theta2) / 180.0 + 500.0);
+	//ang.th3 = (2000 * (theta3) / 180.0 + 500.0);
+
+	ang.th1 = 1500 - (90 - theta1) / 0.135;
+	if (ang.th1 > 2500)ang.th1 = 2500;
+	if (ang.th1 < 500)ang.th1 = 500;
+	ang.th2 = 1500 - theta2 / 0.135;
+	if (ang.th2 > 2500)ang.th2 = 2500;
+	if (ang.th2 < 500)ang.th2 = 500;
+	ang.th3 = 1500 - theta3 / 0.135;
+	if (ang.th3 > 2500)ang.th3 = 2500;
+	if (ang.th3 < 500)ang.th3 = 500;
+
+	cout << ang.th1 << endl;
+	cout << ang.th2 << endl;
+	cout << ang.th3 << endl;
+
+	return 0;
 }

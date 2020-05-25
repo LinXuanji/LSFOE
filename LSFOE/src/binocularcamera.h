@@ -10,13 +10,30 @@
 #define ZOOM_PLUS		0x00000006
 #define ZOOM_OUT		0x00000007
 
+#define PI				3.1415926f
+
+#define l0				103
+#define l1				97
+#define l2				170
+
+#define NLEN			200
+#define MLEN			45
+
 #include <opencv.hpp>
 #include <iostream>
+#include <cmath>
+
+typedef struct
+{
+	float th1 = 0;
+	float th2 = 0;
+	float th3 = 0;
+}angle;
 
 /*
 *@bref:双目摄像机类，提供了相机驱动，标定，与测距等功能接口
 *@author:ColdDewStudio
-*@version: 0.0.1
+*@version: 0.1.1
 */
 class Camera
 {
@@ -33,7 +50,7 @@ private:
 	int numberofshots;						//连拍数量
 	bool zoom;								//图像缩放
 
-	cv::Size imgsize;							//图像大小
+	cv::Size imgsize;						//图像大小
 
 	cv::Mat mapl1, mapl2, mapr1, mapr2;
 	cv::Mat R1, R2, P1, P2;
@@ -85,7 +102,7 @@ public:
 	/*@bref:三维测距*/
 	void SGBM(void);
 	/*@bref:获取目标点3维坐标*/
-	void Get3Dpos(int x, int y);
+	int Get3Dpos(float x, float y, float alpha, angle &ang);
 };
 
 #endif // !_BINOCULARCAMERA_H

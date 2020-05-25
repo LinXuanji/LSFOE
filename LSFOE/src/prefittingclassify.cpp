@@ -22,7 +22,7 @@ Mat BGR(Mat img)
 	{
 		for (int j = 0; j < img.cols; j++)
 		{
-			if (2 * (img.at<Vec3b>(i, j)[2] - 2 * img.at<Vec3b>(i, j)[1]) > 130)
+			if (2 * (img.at<Vec3b>(i, j)[2] - 2 * img.at<Vec3b>(i, j)[1]) > 110)
 			{
 				output.at<uchar>(i, j) = 255;
 			}
@@ -37,17 +37,82 @@ Mat BGR(Mat img)
 	return output;
 }
 
-bool ROIlocate(Mat binimg)
+bool ROIlocate(Mat binimg, int& xval, int& yval, Serial& ser)
 {
 	bool callback = false;
-	for (int i = 80; i < binimg.rows-80; i++)
+	bool flagl = false, flagr = false;
+	Point2d lp, rp;
+	for (int j = 0; j < binimg.cols; j++)
 	{
-		for (int j = 160; j < binimg.cols-80; j++)
+		for (int i = 0; i < binimg.rows; i++)
 		{
 			if (binimg.at<uchar>(i, j) == 255)
 			{
-				callback = true;
+				lp.x = j;
+				lp.y = i;
+				flagl = true;
+				break;
 			}
+		}
+		if (flagl)break;
+	}
+	for (int j = binimg.cols - 1; j >= 0; j--)
+	{
+		for (int i = 0; i < binimg.rows; i++)
+		{
+			if (binimg.at<uchar>(i, j) == 255)
+			{
+				rp.x = j;
+				rp.y = i;
+				flagr = true;
+				break;
+			}
+		}
+		if (flagr)break;
+	}
+	if (lp.x < 400 - ((rp.x - lp.x) / 2 + 10))
+	{
+		if (xval < 2500)
+		{
+			xval += 10;
+			ser.send(1, xval, 10);
+			//while (!ser.receive(1));
+		}
+		
+	}
+	if (rp.x > 400 + ((rp.x - lp.x) / 2 + 10))
+	{
+		if (xval > 500)
+		{
+			xval -= 10;
+			ser.send(1, xval, 10);
+			//while (!ser.receive(1));
+		}
+	}
+	if (lp.y < 240 - 10)
+	{
+		if (yval > 1500)
+		{
+			yval -= 10;
+			ser.send(4, yval, 10);
+			//while (!ser.receive(1));
+		}
+	}
+	if (lp.y > 240 + 10)
+	{
+		if (yval < 2166)
+		{
+			yval += 10;
+			ser.send(4, yval, 10);
+			//while (!ser.receive(1));
+		}
+
+	}
+	if (abs(lp.x - 400) < ((rp.x - lp.x) / 2 + 10))
+	{
+		if (abs(lp.y - 240) < 10)
+		{
+			callback = true;
 		}
 	}
 	return callback;

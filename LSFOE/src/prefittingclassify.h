@@ -4,6 +4,8 @@
 
 #include <opencv.hpp>
 #include <vector>
+#include <cmath>
+#include "serial.h"
 
 /*@bref:图形学闭操作
 @param:[img] [输入的二值化图像]
@@ -21,7 +23,7 @@ cv::Mat BGR(cv::Mat img);
 /*@bref:寻找环境中的目标并返回目标区域
 @param:[binimg] [输入的二值化图像]
 @return:[bool] [目标是否在区域内]*/
-bool ROIlocate(cv::Mat oriimg);
+bool ROIlocate(cv::Mat oriimg, int &xval, int &yval, Serial &ser);
 /*@bref:装载矩阵匹配算法中的匹配核
 @return:[vector<Mat>] [匹配核向量]*/
 std::vector<cv::Mat> loadMask(void);

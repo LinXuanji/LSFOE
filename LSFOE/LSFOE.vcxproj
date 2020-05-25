@@ -23,11 +23,13 @@
     <ClCompile Include="src\ellipsesfitting.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\prefittingclassify.cpp" />
+    <ClCompile Include="src\serial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\binocularcamera.h" />
     <ClInclude Include="src\ellipsesfitting.h" />
     <ClInclude Include="src\prefittingclassify.h" />
+    <ClInclude Include="src\serial.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
